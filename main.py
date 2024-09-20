@@ -7,8 +7,8 @@ def get_average_color(img):
     img = img.resize((1, 1))  # Уменьшение картинки до 1x1 для усреднения цветов
     avg_color = img.getpixel((0, 0))  # Получаем цвет единственного пикселя
 
-    avg_color_rgba = list(avg_color) + [255]
-    return avg_color_rgba
+    avg_color_rgba = list(avg_color)[:-1] + [255]
+    return tuple(avg_color_rgba)
 
 
 
@@ -24,7 +24,10 @@ def remove_bg(imgs_folder, res_folder, bg_color=None):
         img = Image.open(inp_path)
         bg_rm_img = remove(img)
         if not bg_color:
-            return bg_rm_img
+            bg_rm_img.save(out_path, "PNG")
+            return
+        elif bg_color == "auto":
+            bg_color = get_average_color(bg_rm_img)
         width, height = bg_rm_img.size
         background = Image.new("RGBA", (width, height), bg_color)
 
